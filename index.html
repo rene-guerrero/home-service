@@ -39,6 +39,7 @@
     .service-card {
       background: white;
       border-radius: 16px;
+      height: 440px;
       overflow: hidden;
       box-shadow: 0 6px 20px rgba(0, 0, 0, 0.08);
       transition: transform 0.3s, box-shadow 0.3s;
@@ -51,7 +52,7 @@
 
     .service-card img {
       width: 100%;
-      height: 180px;
+      height: 220px;
       object-fit: cover;
     }
 
@@ -133,12 +134,12 @@
 <body>
 
   <!-- HERO -->
-  <div class="row">
+  <div class="row mx-0">
     <div class="col-xl-6" style="height: 650px;">
       <div class="text-center p-5">
         <img class="mb-5" src="logo.svg" alt="Home Service" style="height: 300px;" />
         <h4 style="color: var(--primary); margin-right: 100px; margin-left: 100px">
-          Ponemos la solución a su alcance  
+          Ponemos la solución a su alcance
         </h4>
         <a class="btn btn-success text-uppercase mt-3 d-inline-block" href="https://wa.me/5356402854" target="_blank">
           Contáctanos
@@ -155,36 +156,45 @@
 
   <!-- SERVICES -->
   <div class="text-center" style="background: var(--primary); padding-top: 5rem; padding-bottom: 5rem">
-    <h2 style="color:white">¿Qué le ofrecemos?</h2>
-    <div class="d-flex align-items-center justify-content-center">
-      <section class="services">
-  
-  
-        <div class="service-card">
-          <img src="pictures/004.jpg" />
-          <div class="service-card-content">
-            <h3>Instalación de Paneles Solares</h3>
-            <p>Explora la posibilidad de liberarte de la red eléctrica, reducir tus facturas y contribuir al cuidado del planeta.</p>
+    <h2 style="color:white" class="mb-5">¿Qué le ofrecemos?</h2>
+
+    <div class="container px-5" style="max-width: 1100px;">
+      <div class="row justify-content-center g-4">
+
+        <div class="col-12 col-md-6 col-lg-4">
+          <div class="service-card">
+            <img src="pictures/004.jpg" />
+            <div class="service-card-content">
+              <h3>Instalación de Paneles Solares</h3>
+              <p>Explora la posibilidad de liberarte de la red eléctrica, reducir tus facturas y contribuir al cuidado
+                del planeta.</p>
+            </div>
           </div>
         </div>
-  
-        <div class="service-card">
-          <img src="pictures/002.jpg" />
-          <div class="service-card-content">
-            <h3>Estructuras Metálicas</h3>
-            <p>Servicio de techado y fabricación de estructuras metálicas a medida. Soportes resistentes para paneles solares</p>
+
+        <div class="col-12 col-md-6 col-lg-4">
+          <div class="service-card">
+            <img src="pictures/002.jpg" />
+            <div class="service-card-content">
+              <h3>Estructuras Metálicas</h3>
+              <p>Servicio de techado y fabricación de estructuras metálicas a medida. Soportes resistentes para paneles
+                solares</p>
+            </div>
           </div>
         </div>
-  
-        <div class="service-card">
-          <img src="pictures/006.jpg" />
-          <div class="service-card-content">
-            <h3>Servicio de Electricidad</h3>
-            <p>Desde instalaciones hasta reparaciones de emergencia, brindamos servicios eléctricos seguros, confiables y asequibles.</p>
+
+        <div class="col-12 col-md-6 col-lg-4">
+          <div class="service-card">
+            <img src="pictures/006.jpg" />
+            <div class="service-card-content">
+              <h3>Servicio de Electricidad</h3>
+              <p>Desde instalaciones hasta reparaciones de emergencia, brindamos servicios eléctricos seguros,
+                confiables y asequibles.</p>
+            </div>
           </div>
         </div>
-  
-      </section>
+
+      </div>
     </div>
   </div>
 
@@ -193,16 +203,16 @@
 
   </div>
 
-  
+
   <!-- FOOTER -->
   <footer>
     <!-- CONTACT -->
     <section class="contact-section">
       <h2>Contáctanos</h2>
       <p>Estamos disponibles para ayudarte con tu proyecto.</p>
-  
+
       <div class="contact-buttons">
-  
+
         <!-- WHATSAPP -->
         <a class="btn btn-whatsapp" href="https://wa.me/5356402854" target="_blank">
           <svg viewBox="0 0 32 32">
@@ -211,7 +221,7 @@
           </svg>
           WhatsApp
         </a>
-  
+
         <!-- FACEBOOK -->
         <a class="btn btn-facebook" href="https://www.facebook.com/groups/3079828725608415/user/61569374215940/"
           target="_blank">
@@ -221,7 +231,7 @@
           </svg>
           Facebook
         </a>
-  
+
       </div>
     </section>
     © 2025 Home Service — Todos los derechos reservados
