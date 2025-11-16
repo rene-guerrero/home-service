@@ -1,105 +1,232 @@
 <!DOCTYPE html>
 <html lang="es">
+
 <head>
   <meta charset="UTF-8" />
   <meta name="viewport" content="width=device-width, initial-scale=1.0" />
   <title>Home Service</title>
+  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;700&display=swap" rel="stylesheet">
+  <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.0.2/dist/css/bootstrap.min.css" rel="stylesheet"
+    integrity="sha384-EVSTQN3/azprG1Anm3QDgpJLIm9Nao0Yz1ztcQTwFspd3yD65VohhpuuCOmLASjC" crossorigin="anonymous">
   <style>
+    :root {
+      --primary: #00632a;
+      --primary-light: #0a9a48;
+      --primary-dark: #00491f;
+      --bs-primary: #00632a;
+      --bs-primary-hover: #0a9a48;
+      --bs-secondary: #00491f;
+      --bs-success: #25D366;
+      --bs-info: #1877f2;
+    }
+
     body {
       margin: 0;
-      font-family: Arial, sans-serif;
-      background: #f8f9fa;
+      font-family: 'Inter', sans-serif;
+      background: #f4f4f4;
       color: #333;
     }
 
-    header {
-      background: #0b57d0;
-      padding: 20px;
-      text-align: center;
-      color: white;
-    }
-
-    h1 {
-      margin: 0;
-      font-size: 2.2rem;
-    }
-
-    .hero {
-      text-align: center;
-      padding: 60px 20px;
-      background: white;
-    }
-
-    .hero p {
-      font-size: 1.2rem;
-      margin-top: 10px;
-      color: #555;
-    }
 
     .services {
-      max-width: 900px;
-      margin: 40px auto;
+      max-width: 1100px;
       padding: 20px;
       display: grid;
-      grid-template-columns: repeat(auto-fit, minmax(250px, 1fr));
-      gap: 20px;
+      grid-template-columns: repeat(auto-fit, minmax(280px, 1fr));
+      gap: 25px;
     }
 
     .service-card {
       background: white;
+      border-radius: 16px;
+      overflow: hidden;
+      box-shadow: 0 6px 20px rgba(0, 0, 0, 0.08);
+      transition: transform 0.3s, box-shadow 0.3s;
+    }
+
+    .service-card:hover {
+      transform: translateY(-8px);
+      box-shadow: 0 12px 24px rgba(0, 0, 0, 0.15);
+    }
+
+    .service-card img {
+      width: 100%;
+      height: 180px;
+      object-fit: cover;
+    }
+
+    .service-card-content {
       padding: 20px;
-      border-radius: 8px;
-      box-shadow: 0 2px 6px rgba(0,0,0,0.1);
       text-align: center;
     }
 
     .service-card h3 {
       margin-top: 0;
-      color: #0b57d0;
+      color: var(--primary);
+    }
+
+    .contact-section {
+      text-align: center;
+      padding: 40px 20px;
+      color: white;
+    }
+
+    .contact-section h2 {
+      font-size: 2rem;
+      margin-bottom: 10px;
+    }
+
+    .contact-section p {
+      font-size: 1.1rem;
+    }
+
+    .contact-buttons {
+      margin-top: 25px;
+      display: flex;
+      justify-content: center;
+      gap: 20px;
+      flex-wrap: wrap;
+    }
+
+    .btn {
+      padding: 14px 24px;
+      border-radius: 8px;
+      font-size: 1rem;
+      text-decoration: none;
+      color: white;
+      font-weight: bold;
+      display: flex;
+      align-items: center;
+      gap: 10px;
+      transition: all 0.3s ease;
+    }
+
+    .btn svg {
+      width: 22px;
+      height: 22px;
+    }
+
+    .btn:hover {
+      transform: translateY(-2px);
+      box-shadow: 0 4px 12px rgba(0, 0, 0, 0.2);
+    }
+
+    .btn-whatsapp {
+      background: #25D366;
+    }
+
+    .btn-facebook {
+      background: #1877f2;
     }
 
     footer {
       text-align: center;
       padding: 20px;
       margin-top: 40px;
-      background: #0b57d0;
+      background: var(--primary);
       color: white;
       font-size: 0.9rem;
     }
   </style>
 </head>
+
 <body>
 
-  <header>
-    <h1>Home Service</h1>
-    <p>Expertos en instalaciones solares y techos metálicos</p>
-  </header>
-
-  <section class="hero">
-    <h2>Energía limpia y soluciones duraderas para tu hogar o negocio</h2>
-    <p>Brindamos servicios profesionales de instalación de paneles solares, techos metálicos y mantenimiento general.</p>
-  </section>
-
-  <section class="services">
-    <div class="service-card">
-      <h3>Paneles Solares</h3>
-      <p>Instalación profesional de sistemas solares para reducir tu consumo eléctrico.</p>
+  <!-- HERO -->
+  <div class="row">
+    <div class="col-xl-6" style="height: 650px;">
+      <div class="text-center p-5">
+        <img class="mb-5" src="logo.svg" alt="Home Service" style="height: 300px;" />
+        <h4 style="color: var(--primary); margin-right: 100px; margin-left: 100px">
+          Ponemos la solución a su alcance  
+        </h4>
+        <a class="btn btn-success text-uppercase mt-3 d-inline-block" href="https://wa.me/5356402854" target="_blank">
+          Contáctanos
+        </a>
+      </div>
     </div>
-
-    <div class="service-card">
-      <h3>Techos Metálicos</h3>
-      <p>Construcción e instalación de techos duraderos, resistentes y modernos.</p>
+    <div class="col-xl-6" style="height: 650px; 
+      background-image: linear-gradient(135deg, rgba(0, 0, 0, 0.037), rgba(0, 0, 0, 0.059)), url('pictures/001.jpg');
+      background-size: cover; 
+      background-position: center; 
+      background-repeat: no-repeat;">
     </div>
+  </div>
 
-    <div class="service-card">
-      <h3>Mantenimiento</h3>
-      <p>Revisión y reparación de instalaciones para mejorar su rendimiento.</p>
+  <!-- SERVICES -->
+  <div class="text-center" style="background: var(--primary); padding-top: 5rem; padding-bottom: 5rem">
+    <h2 style="color:white">¿Qué le ofrecemos?</h2>
+    <div class="d-flex align-items-center justify-content-center">
+      <section class="services">
+  
+  
+        <div class="service-card">
+          <img src="pictures/004.jpg" />
+          <div class="service-card-content">
+            <h3>Instalación de Paneles Solares</h3>
+            <p>Explora la posibilidad de liberarte de la red eléctrica, reducir tus facturas y contribuir al cuidado del planeta.</p>
+          </div>
+        </div>
+  
+        <div class="service-card">
+          <img src="pictures/002.jpg" />
+          <div class="service-card-content">
+            <h3>Estructuras Metálicas</h3>
+            <p>Servicio de techado y fabricación de estructuras metálicas a medida. Soportes resistentes para paneles solares</p>
+          </div>
+        </div>
+  
+        <div class="service-card">
+          <img src="pictures/006.jpg" />
+          <div class="service-card-content">
+            <h3>Servicio de Electricidad</h3>
+            <p>Desde instalaciones hasta reparaciones de emergencia, brindamos servicios eléctricos seguros, confiables y asequibles.</p>
+          </div>
+        </div>
+  
+      </section>
     </div>
-  </section>
+  </div>
 
+  <!-- SOLAR -->
+  <div style="min-height: 500px;">
+
+  </div>
+
+  
+  <!-- FOOTER -->
   <footer>
+    <!-- CONTACT -->
+    <section class="contact-section">
+      <h2>Contáctanos</h2>
+      <p>Estamos disponibles para ayudarte con tu proyecto.</p>
+  
+      <div class="contact-buttons">
+  
+        <!-- WHATSAPP -->
+        <a class="btn btn-whatsapp" href="https://wa.me/5356402854" target="_blank">
+          <svg viewBox="0 0 32 32">
+            <path fill="white"
+              d="M16 .5C7.44.5.5 7.44.5 16c0 2.82.74 5.57 2.15 8.02L.5 31.5l7.7-2.09A15.37 15.37 0 0 0 16 31.5c8.56 0 15.5-6.94 15.5-15.5S24.56.5 16 .5Zm8.95 22.2c-.37 1.04-2.18 2-3.02 2.1-.78.1-1.78.14-2.88-.18-.66-.2-1.5-.49-2.58-1.04-4.51-2.31-7.45-6.63-7.68-6.94-.22-.31-1.83-2.44-1.83-4.66 0-2.22 1.16-3.31 1.57-3.76.41-.45.9-.56 1.2-.56.31 0 .6 0 .86.02.28.01.65-.11 1.02.78.37.89 1.26 3.08 1.37 3.3.11.22.18.48.03.79-.15.31-.22.48-.44.73-.22.25-.47.56-.67.75-.22.22-.45.47-.19.92.25.45 1.12 1.84 2.4 2.99 1.65 1.48 3.02 1.94 3.47 2.17.45.22.71.19.97-.11.28-.31 1.12-1.31 1.42-1.76.31-.45.6-.37 1.02-.22.42.14 2.65 1.25 3.1 1.47.46.22.76.33.87.52.12.19.12 1.1-.25 2.14Z" />
+          </svg>
+          WhatsApp
+        </a>
+  
+        <!-- FACEBOOK -->
+        <a class="btn btn-facebook" href="https://www.facebook.com/groups/3079828725608415/user/61569374215940/"
+          target="_blank">
+          <svg viewBox="0 0 24 24">
+            <path fill="white"
+              d="M22 12a10 10 0 1 0-11.5 9.87v-6.99H8v-2.88h2.5V9.41c0-2.47 1.47-3.84 3.72-3.84 1.08 0 2.22.19 2.22.19v2.44H15.9c-1.24 0-1.63.77-1.63 1.56v1.87H18l-.4 2.88h-2.32v6.99A10 10 0 0 0 22 12" />
+          </svg>
+          Facebook
+        </a>
+  
+      </div>
+    </section>
     © 2025 Home Service — Todos los derechos reservados
   </footer>
 
 </body>
+
 </html>
