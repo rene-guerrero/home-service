@@ -1,4 +1,15 @@
 {
-  "images": [],
-  "lastUpdated": "2026-02-10T01:25:25.157Z"
+  "images": [
+    {
+      "id": "mlfx829vvu6n1n0yy",
+      "filename": "mlfx829vvu6n1n0yy.jpg",
+      "title": "image 1",
+      "description": "test",
+      "size": 157014,
+      "path": "pictures/mlfx829vvu6n1n0yy.jpg",
+      "url": "pictures/mlfx829vvu6n1n0yy.jpg",
+      "uploadedAt": "2026-02-10T01:27:16.967Z"
+    }
+  ],
+  "lastUpdated": "2026-02-10T01:27:16.967Z"
 }
