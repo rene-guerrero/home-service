@@ -1,0 +1,62 @@
+name: Keep Supabase Active
+
+# Ejecutar cada 3 días a las 3:00 AM UTC
+on:
+  schedule:
+    - cron: '0 3 */3 * *'
+  # También permitir ejecución manual
+  workflow_dispatch:
+
+jobs:
+  ping-supabase:
+    runs-on: ubuntu-latest
+    
+    steps:
+      - name: Ping Supabase Database
+        run: |
+          echo "🔄 Haciendo ping a Supabase para mantenerlo activo..."
+          
+          # Hacer una consulta simple a la base de datos
+          response=$(curl -s -w "\n%{http_code}" \
+            -X GET \
+            -H "apikey: eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6Imhld3Rpc2N3eGR2b2RnZ3JtaWdvIiwicm9sZSI6ImFub24iLCJpYXQiOjE3NzA2ODI5OTAsImV4cCI6MjA4NjI1ODk5MH0.zDlkbAoduycTUIiTJ9OdwNgrbiOokbvvDER_RexiR8w" \
+            -H "Authorization: Bearer eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6Imhld3Rpc2N3eGR2b2RnZ3JtaWdvIiwicm9sZSI6ImFub24iLCJpYXQiOjE3NzA2ODI5OTAsImV4cCI6MjA4NjI1ODk5MH0.zDlkbAoduycTUIiTJ9OdwNgrbiOokbvvDER_RexiR8w" \
+            "https://hewtiscwxdvodggrmigo.supabase.co/rest/v1/images?select=count&limit=1")
+          
+          http_code=$(echo "$response" | tail -n1)
+          body=$(echo "$response" | sed '$d')
+          
+          if [ "$http_code" -eq 200 ] || [ "$http_code" -eq 206 ]; then
+            echo "✅ Ping exitoso! Código HTTP: $http_code"
+            echo "📊 Respuesta: $body"
+          else
+            echo "⚠️  Ping con advertencia. Código HTTP: $http_code"
+            echo "📊 Respuesta: $body"
+          fi
+
+      - name: Ping Supabase Storage
+        run: |
+          echo "🔄 Haciendo ping a Supabase Storage..."
+          
+          # Listar buckets para activar el storage
+          response=$(curl -s -w "\n%{http_code}" \
+            -X GET \
+            -H "apikey: eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6Imhld3Rpc2N3eGR2b2RnZ3JtaWdvIiwicm9sZSI6ImFub24iLCJpYXQiOjE3NzA2ODI5OTAsImV4cCI6MjA4NjI1ODk5MH0.zDlkbAoduycTUIiTJ9OdwNgrbiOokbvvDER_RexiR8w" \
+            -H "Authorization: Bearer eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6Imhld3Rpc2N3eGR2b2RnZ3JtaWdvIiwicm9sZSI6ImFub24iLCJpYXQiOjE3NzA2ODI5OTAsImV4cCI6MjA4NjI1ODk5MH0.zDlkbAoduycTUIiTJ9OdwNgrbiOokbvvDER_RexiR8w" \
+            "https://hewtiscwxdvodggrmigo.supabase.co/storage/v1/bucket")
+          
+          http_code=$(echo "$response" | tail -n1)
+          
+          if [ "$http_code" -eq 200 ]; then
+            echo "✅ Storage activo! Código HTTP: $http_code"
+          else
+            echo "⚠️  Storage response: $http_code"
+          fi
+
+      - name: Summary
+        run: |
+          echo "━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━"
+          echo "🎉 Mantenimiento completado"
+          echo "⏰ Próxima ejecución: en 3 días"
+          echo "📅 Fecha actual: $(date -u)"
+          echo "━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━"

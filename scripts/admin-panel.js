@@ -1,6 +1,7 @@
 // Lógica del panel de administración
 let selectedFile = null;
 let editModal = null;
+let changePasswordModal = null;
 
 document.addEventListener('DOMContentLoaded', function() {
   // Verificar autenticación
@@ -22,6 +23,18 @@ document.addEventListener('DOMContentLoaded', function() {
   document.getElementById('removeImage').addEventListener('click', removeSelectedImage);
   document.getElementById('refreshGallery').addEventListener('click', loadGallery);
   document.getElementById('saveEditBtn').addEventListener('click', handleSaveEdit);
+  document.getElementById('savePasswordBtn').addEventListener('click', handleChangePassword);
+  
+  // Password visibility toggles
+  document.getElementById('toggleCurrentPassword').addEventListener('click', () => togglePasswordVisibility('currentPassword', 'toggleCurrentPassword'));
+  document.getElementById('toggleNewPassword').addEventListener('click', () => togglePasswordVisibility('newPassword', 'toggleNewPassword'));
+  document.getElementById('toggleConfirmPassword').addEventListener('click', () => togglePasswordVisibility('confirmPassword', 'toggleConfirmPassword'));
+  
+  // Password strength checker
+  document.getElementById('newPassword').addEventListener('input', checkPasswordStrength);
+  
+  // Password match checker
+  document.getElementById('confirmPassword').addEventListener('input', checkPasswordMatch);
 
   // Drag and drop
   const uploadArea = document.getElementById('uploadArea');
@@ -45,9 +58,151 @@ document.addEventListener('DOMContentLoaded', function() {
     }
   });
 
-  // Inicializar modal
+  // Inicializar modals
   editModal = new bootstrap.Modal(document.getElementById('editModal'));
+  changePasswordModal = new bootstrap.Modal(document.getElementById('changePasswordModal'));
 });
+
+// Toggle password visibility
+function togglePasswordVisibility(inputId, buttonId) {
+  const input = document.getElementById(inputId);
+  const button = document.getElementById(buttonId);
+  const icon = button.querySelector('i');
+  
+  if (input.type === 'password') {
+    input.type = 'text';
+    icon.classList.remove('bi-eye-fill');
+    icon.classList.add('bi-eye-slash-fill');
+  } else {
+    input.type = 'password';
+    icon.classList.remove('bi-eye-slash-fill');
+    icon.classList.add('bi-eye-fill');
+  }
+}
+
+// Check password strength
+function checkPasswordStrength() {
+  const password = document.getElementById('newPassword').value;
+  const strengthBar = document.getElementById('strengthBar');
+  const strengthText = document.getElementById('strengthText');
+  const strengthContainer = document.getElementById('passwordStrength');
+  
+  if (password.length === 0) {
+    strengthContainer.classList.add('d-none');
+    return;
+  }
+  
+  strengthContainer.classList.remove('d-none');
+  
+  let strength = 0;
+  let feedback = [];
+  
+  // Length check
+  if (password.length >= 8) strength += 20;
+  if (password.length >= 12) strength += 10;
+  
+  // Character variety
+  if (/[a-z]/.test(password)) strength += 20;
+  if (/[A-Z]/.test(password)) strength += 20;
+  if (/[0-9]/.test(password)) strength += 20;
+  if (/[^a-zA-Z0-9]/.test(password)) strength += 10;
+  
+  // Set color and text
+  strengthBar.style.width = strength + '%';
+  
+  if (strength < 40) {
+    strengthBar.className = 'progress-bar bg-danger';
+    strengthText.textContent = 'Débil';
+    strengthText.className = 'text-danger';
+  } else if (strength < 70) {
+    strengthBar.className = 'progress-bar bg-warning';
+    strengthText.textContent = 'Media';
+    strengthText.className = 'text-warning';
+  } else {
+    strengthBar.className = 'progress-bar bg-success';
+    strengthText.textContent = 'Fuerte';
+    strengthText.className = 'text-success';
+  }
+}
+
+// Check if passwords match
+function checkPasswordMatch() {
+  const newPassword = document.getElementById('newPassword').value;
+  const confirmPassword = document.getElementById('confirmPassword').value;
+  const errorDiv = document.getElementById('passwordMatchError');
+  
+  if (confirmPassword.length === 0) {
+    errorDiv.classList.add('d-none');
+    return;
+  }
+  
+  if (newPassword !== confirmPassword) {
+    errorDiv.classList.remove('d-none');
+  } else {
+    errorDiv.classList.add('d-none');
+  }
+}
+
+// Handle change password
+async function handleChangePassword() {
+  const currentPassword = document.getElementById('currentPassword').value;
+  const newPassword = document.getElementById('newPassword').value;
+  const confirmPassword = document.getElementById('confirmPassword').value;
+  
+  // Validations
+  if (!currentPassword || !newPassword || !confirmPassword) {
+    showAlert('Por favor completa todos los campos', 'danger');
+    return;
+  }
+  
+  if (newPassword.length < 8) {
+    showAlert('La nueva contraseña debe tener al menos 8 caracteres', 'danger');
+    return;
+  }
+  
+  if (newPassword !== confirmPassword) {
+    showAlert('Las contraseñas no coinciden', 'danger');
+    return;
+  }
+  
+  if (currentPassword === newPassword) {
+    showAlert('La nueva contraseña debe ser diferente a la actual', 'danger');
+    return;
+  }
+  
+  // Show loading
+  const saveBtn = document.getElementById('savePasswordBtn');
+  const originalText = saveBtn.innerHTML;
+  saveBtn.innerHTML = '<span class="spinner-border spinner-border-sm me-2"></span>Cambiando...';
+  saveBtn.disabled = true;
+  
+  try {
+    const session = authSystem.getSession();
+    const result = await authSystem.changePassword(session.username, currentPassword, newPassword);
+    
+    if (result.success) {
+      showAlert('¡Contraseña actualizada correctamente!', 'success');
+      changePasswordModal.hide();
+      
+      // Limpiar formulario
+      document.getElementById('changePasswordForm').reset();
+      document.getElementById('passwordStrength').classList.add('d-none');
+      document.getElementById('passwordMatchError').classList.add('d-none');
+      
+      // Mostrar mensaje de confirmación
+      setTimeout(() => {
+        showAlert('Por seguridad, cierra sesión y vuelve a iniciar con tu nueva contraseña', 'info');
+      }, 1000);
+    } else {
+      showAlert(result.message, 'danger');
+    }
+  } catch (error) {
+    showAlert('Error al cambiar contraseña: ' + error.message, 'danger');
+  } finally {
+    saveBtn.innerHTML = originalText;
+    saveBtn.disabled = false;
+  }
+}
 
 function initializePage() {
   const session = authSystem.getSession();

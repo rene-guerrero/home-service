@@ -24,6 +24,9 @@
           <small id="welcomeMessage"></small>
         </div>
         <div>
+          <button class="btn btn-outline-light me-2" data-bs-toggle="modal" data-bs-target="#changePasswordModal">
+            <i class="bi bi-key-fill me-1"></i>Cambiar Contraseña
+          </button>
           <a href="index.html" class="btn btn-back me-2" target="_blank">
             <i class="bi bi-eye me-1"></i>Ver Sitio
           </a>
@@ -155,6 +158,82 @@
           <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Cancelar</button>
           <button type="button" class="btn btn-primary" id="saveEditBtn">
             <i class="bi bi-check-circle me-1"></i>Guardar Cambios
+          </button>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <!-- Change Password Modal -->
+  <div class="modal fade" id="changePasswordModal" tabindex="-1">
+    <div class="modal-dialog">
+      <div class="modal-content">
+        <div class="modal-header">
+          <h5 class="modal-title"><i class="bi bi-key-fill text-primary"></i> Cambiar Contraseña</h5>
+          <button type="button" class="btn-close" data-bs-dismiss="modal"></button>
+        </div>
+        <div class="modal-body">
+          <div class="alert alert-info">
+            <i class="bi bi-info-circle"></i> <strong>Recomendaciones:</strong>
+            <ul class="mb-0 mt-2 small">
+              <li>Mínimo 8 caracteres</li>
+              <li>Incluye mayúsculas, minúsculas y números</li>
+              <li>Usa caracteres especiales (!@#$%)</li>
+            </ul>
+          </div>
+
+          <form id="changePasswordForm">
+            <div class="mb-3">
+              <label for="currentPassword" class="form-label">Contraseña Actual *</label>
+              <div class="input-group">
+                <span class="input-group-text"><i class="bi bi-lock-fill"></i></span>
+                <input type="password" class="form-control" id="currentPassword" required autocomplete="current-password">
+                <button class="btn btn-outline-secondary" type="button" id="toggleCurrentPassword">
+                  <i class="bi bi-eye-fill"></i>
+                </button>
+              </div>
+            </div>
+
+            <div class="mb-3">
+              <label for="newPassword" class="form-label">Nueva Contraseña *</label>
+              <div class="input-group">
+                <span class="input-group-text"><i class="bi bi-key-fill"></i></span>
+                <input type="password" class="form-control" id="newPassword" required minlength="8" autocomplete="new-password">
+                <button class="btn btn-outline-secondary" type="button" id="toggleNewPassword">
+                  <i class="bi bi-eye-fill"></i>
+                </button>
+              </div>
+              <div class="form-text">Mínimo 8 caracteres</div>
+            </div>
+
+            <div class="mb-3">
+              <label for="confirmPassword" class="form-label">Confirmar Nueva Contraseña *</label>
+              <div class="input-group">
+                <span class="input-group-text"><i class="bi bi-key-fill"></i></span>
+                <input type="password" class="form-control" id="confirmPassword" required minlength="8" autocomplete="new-password">
+                <button class="btn btn-outline-secondary" type="button" id="toggleConfirmPassword">
+                  <i class="bi bi-eye-fill"></i>
+                </button>
+              </div>
+            </div>
+
+            <div id="passwordStrength" class="d-none mb-3">
+              <small class="text-muted">Fortaleza:</small>
+              <div class="progress" style="height: 5px;">
+                <div id="strengthBar" class="progress-bar" role="progressbar" style="width: 0%"></div>
+              </div>
+              <small id="strengthText" class="text-muted"></small>
+            </div>
+
+            <div id="passwordMatchError" class="alert alert-danger d-none">
+              <i class="bi bi-exclamation-triangle-fill"></i> Las contraseñas no coinciden
+            </div>
+          </form>
+        </div>
+        <div class="modal-footer">
+          <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Cancelar</button>
+          <button type="button" class="btn btn-primary" id="savePasswordBtn">
+            <i class="bi bi-check-circle me-1"></i>Cambiar Contraseña
           </button>
         </div>
       </div>
