@@ -24,9 +24,6 @@
           <small id="welcomeMessage"></small>
         </div>
         <div>
-          <button class="btn btn-outline-light me-2" data-bs-toggle="modal" data-bs-target="#githubConfigModal">
-            <i class="bi bi-github me-1"></i>Configurar GitHub
-          </button>
           <a href="index.html" class="btn btn-back me-2" target="_blank">
             <i class="bi bi-eye me-1"></i>Ver Sitio
           </a>
@@ -42,15 +39,6 @@
   <div class="admin-content bg-light">
     <div class="container">
       
-      <!-- GitHub Config Alert -->
-      <div id="githubConfigAlert" class="alert alert-warning alert-dismissible fade show d-none" role="alert">
-        <h5 class="alert-heading"><i class="bi bi-github"></i> Configuración de GitHub Requerida</h5>
-        <p class="mb-2">Para subir imágenes, necesitas configurar tu repositorio de GitHub.</p>
-        <button type="button" class="btn btn-sm btn-primary" data-bs-toggle="modal" data-bs-target="#githubConfigModal">
-          <i class="bi bi-gear-fill"></i> Configurar Ahora
-        </button>
-        <button type="button" class="btn-close" data-bs-dismiss="alert"></button>
-      </div>
 
       <!-- Stats -->
       <div class="row mb-4">
@@ -173,66 +161,12 @@
     </div>
   </div>
 
-  <!-- GitHub Config Modal -->
-  <div class="modal fade" id="githubConfigModal" tabindex="-1">
-    <div class="modal-dialog">
-      <div class="modal-content">
-        <div class="modal-header">
-          <h5 class="modal-title"><i class="bi bi-github"></i> Configuración de GitHub</h5>
-          <button type="button" class="btn-close" data-bs-dismiss="modal"></button>
-        </div>
-        <div class="modal-body">
-          <div class="alert alert-info">
-            <strong><i class="bi bi-info-circle"></i> Información:</strong>
-            <p class="mb-0 small">Las imágenes se guardarán en tu repositorio de GitHub. Necesitas un Personal Access Token con permisos de <code>repo</code>.</p>
-          </div>
-          
-          <form id="githubConfigForm">
-            <div class="mb-3">
-              <label for="githubOwner" class="form-label">Usuario/Organización *</label>
-              <input type="text" class="form-control" id="githubOwner" placeholder="tu-usuario" required>
-              <small class="text-muted">Tu nombre de usuario de GitHub</small>
-            </div>
-
-            <div class="mb-3">
-              <label for="githubRepo" class="form-label">Repositorio *</label>
-              <input type="text" class="form-control" id="githubRepo" placeholder="mi-repo" required>
-              <small class="text-muted">Nombre del repositorio donde está el sitio</small>
-            </div>
-
-            <div class="mb-3">
-              <label for="githubToken" class="form-label">Personal Access Token *</label>
-              <input type="password" class="form-control" id="githubToken" placeholder="ghp_..." required>
-              <small class="text-muted">
-                <a href="https://github.com/settings/tokens/new" target="_blank">Crear token</a> con permiso <code>repo</code>
-              </small>
-            </div>
-
-            <div class="mb-3">
-              <label for="githubBranch" class="form-label">Branch</label>
-              <input type="text" class="form-control" id="githubBranch" value="main">
-              <small class="text-muted">Por defecto: main</small>
-            </div>
-          </form>
-
-          <div class="alert alert-warning small">
-            <i class="bi bi-shield-lock"></i> Tu token se guarda localmente en tu navegador y nunca se comparte.
-          </div>
-        </div>
-        <div class="modal-footer">
-          <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Cancelar</button>
-          <button type="button" class="btn btn-primary" id="saveGithubConfigBtn">
-            <i class="bi bi-check-circle me-1"></i>Guardar Configuración
-          </button>
-        </div>
-      </div>
-    </div>
-  </div>
 
   <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.2/dist/js/bootstrap.bundle.min.js"></script>
   <script src="scripts/auth.js"></script>
-  <!-- Usar GitHub para almacenamiento -->
-  <script src="scripts/storage-github.js"></script>
+  <!-- Usar Supabase para almacenamiento -->
+  <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
+  <script src="scripts/storage-supabase.js"></script>
   <script src="scripts/admin-panel.js"></script>
 </body>
 

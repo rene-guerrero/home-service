@@ -1,7 +1,6 @@
 // Lógica del panel de administración
 let selectedFile = null;
 let editModal = null;
-let githubConfigModal = null;
 
 document.addEventListener('DOMContentLoaded', function() {
   // Verificar autenticación
@@ -12,7 +11,6 @@ document.addEventListener('DOMContentLoaded', function() {
 
   // Inicializar
   initializePage();
-  checkGitHubConfig();
   loadGallery();
   updateStats();
 
@@ -24,7 +22,6 @@ document.addEventListener('DOMContentLoaded', function() {
   document.getElementById('removeImage').addEventListener('click', removeSelectedImage);
   document.getElementById('refreshGallery').addEventListener('click', loadGallery);
   document.getElementById('saveEditBtn').addEventListener('click', handleSaveEdit);
-  document.getElementById('saveGithubConfigBtn').addEventListener('click', handleSaveGithubConfig);
 
   // Drag and drop
   const uploadArea = document.getElementById('uploadArea');
@@ -48,52 +45,9 @@ document.addEventListener('DOMContentLoaded', function() {
     }
   });
 
-  // Inicializar modals
+  // Inicializar modal
   editModal = new bootstrap.Modal(document.getElementById('editModal'));
-  githubConfigModal = new bootstrap.Modal(document.getElementById('githubConfigModal'));
 });
-
-function checkGitHubConfig() {
-  if (!galleryStorage.isConfigured()) {
-    document.getElementById('githubConfigAlert').classList.remove('d-none');
-    document.getElementById('uploadBtn').disabled = true;
-    document.getElementById('uploadBtn').innerHTML = '<i class="bi bi-gear-fill me-1"></i>Configurar GitHub primero';
-  } else {
-    document.getElementById('githubConfigAlert').classList.add('d-none');
-    
-    // Cargar configuración actual en el modal
-    const config = galleryStorage.getGitHubConfig();
-    document.getElementById('githubOwner').value = config.owner;
-    document.getElementById('githubRepo').value = config.repo;
-    document.getElementById('githubBranch').value = config.branch;
-    // No mostramos el token por seguridad
-  }
-}
-
-function handleSaveGithubConfig() {
-  const owner = document.getElementById('githubOwner').value.trim();
-  const repo = document.getElementById('githubRepo').value.trim();
-  const token = document.getElementById('githubToken').value.trim();
-  const branch = document.getElementById('githubBranch').value.trim() || 'main';
-
-  if (!owner || !repo || !token) {
-    showAlert('Por favor completa todos los campos obligatorios', 'danger');
-    return;
-  }
-
-  const result = galleryStorage.saveGitHubConfig(owner, repo, token, branch);
-  
-  if (result.success) {
-    showAlert('¡Configuración de GitHub guardada!', 'success');
-    githubConfigModal.hide();
-    checkGitHubConfig();
-    
-    // Limpiar el campo de token por seguridad
-    document.getElementById('githubToken').value = '';
-  } else {
-    showAlert('Error al guardar configuración', 'danger');
-  }
-}
 
 function initializePage() {
   const session = authSystem.getSession();
@@ -213,12 +167,12 @@ async function loadGallery() {
 
   galleryContainer.innerHTML = images.map(image => `
     <div class="gallery-card" data-id="${image.id}">
-      <img src="${image.url || galleryStorage.getImageUrl(image.filename)}" alt="${escapeHtml(image.title)}" class="gallery-card-image">
+      <img src="${image.url}" alt="${escapeHtml(image.title)}" class="gallery-card-image">
       <div class="gallery-card-body">
         <h6 class="gallery-card-title">${escapeHtml(image.title)}</h6>
         <p class="gallery-card-description">${escapeHtml(image.description || 'Sin descripción')}</p>
         <div class="text-muted small mb-2">
-          <i class="bi bi-calendar me-1"></i>${formatDate(image.uploadedAt || image.createdAt)}
+          <i class="bi bi-calendar me-1"></i>${formatDate(image.created_at)}
         </div>
         <div class="gallery-card-actions">
           <button class="btn btn-sm btn-edit" onclick="editImage('${image.id}')">
@@ -241,8 +195,8 @@ async function updateStats() {
   document.getElementById('storageUsed').textContent = stats.totalSizeFormatted;
   
   if (images.length > 0) {
-    const lastImage = images[images.length - 1];
-    document.getElementById('lastUpdate').textContent = formatDate(lastImage.uploadedAt || lastImage.createdAt);
+    const lastImage = images[0]; // Ya viene ordenado por created_at DESC
+    document.getElementById('lastUpdate').textContent = formatDate(lastImage.created_at);
   } else {
     document.getElementById('lastUpdate').textContent = '-';
   }
@@ -257,7 +211,7 @@ async function editImage(id) {
   }
 
   document.getElementById('editImageId').value = id;
-  document.getElementById('editImagePreview').src = image.url || galleryStorage.getImageUrl(image.filename);
+  document.getElementById('editImagePreview').src = image.url;
   document.getElementById('editImageTitle').value = image.title;
   document.getElementById('editImageDescription').value = image.description || '';
 

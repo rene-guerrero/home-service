@@ -1,21 +1,66 @@
-// Sistema de galería pública para la página principal usando GitHub
-class PublicGalleryGitHub {
+// Sistema de galería pública para la página principal usando Supabase
+class PublicGallerySupabase {
   constructor(containerId) {
     this.container = document.getElementById(containerId);
-    this.GALLERY_JSON_URL = 'data/gallery.json';
+    this.SUPABASE_URL = 'https://hewtiscwxdvodggrmigo.supabase.co';
+    this.SUPABASE_ANON_KEY = 'eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6Imhld3Rpc2N3eGR2b2RnZ3JtaWdvIiwicm9sZSI6ImFub24iLCJpYXQiOjE3NzA2ODI5OTAsImV4cCI6MjA4NjI1ODk5MH0.zDlkbAoduycTUIiTJ9OdwNgrbiOokbvvDER_RexiR8w';
+    this.TABLE_NAME = 'images';
+    
+    this.supabase = null;
+    this.initSupabase();
   }
 
-  // Obtener imágenes desde gallery.json
+  // Inicializar cliente de Supabase
+  async initSupabase() {
+    if (!window.supabase) {
+      await this.loadSupabaseLib();
+    }
+    
+    this.supabase = window.supabase.createClient(
+      this.SUPABASE_URL,
+      this.SUPABASE_ANON_KEY
+    );
+  }
+
+  // Cargar librería de Supabase
+  loadSupabaseLib() {
+    return new Promise((resolve, reject) => {
+      if (window.supabase) {
+        resolve();
+        return;
+      }
+
+      const script = document.createElement('script');
+      script.src = 'https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2';
+      script.onload = resolve;
+      script.onerror = reject;
+      document.head.appendChild(script);
+    });
+  }
+
+  // Asegurar que Supabase está inicializado
+  async ensureInitialized() {
+    if (!this.supabase) {
+      await this.initSupabase();
+    }
+  }
+
+  // Obtener imágenes públicamente
   async getImages() {
     try {
-      const response = await fetch(`/${this.GALLERY_JSON_URL}?t=${Date.now()}`);
-      
-      if (!response.ok) {
+      await this.ensureInitialized();
+
+      const { data, error } = await this.supabase
+        .from(this.TABLE_NAME)
+        .select('*')
+        .order('created_at', { ascending: false });
+
+      if (error) {
+        console.error('Error al cargar galería:', error);
         return [];
       }
 
-      const data = await response.json();
-      return data.images || [];
+      return data || [];
     } catch (error) {
       console.error('Error al cargar galería:', error);
       return [];
@@ -50,7 +95,7 @@ class PublicGalleryGitHub {
     this.container.innerHTML = images.map(image => `
       <div class="col-12 col-md-6 col-lg-4 mb-4">
         <div class="gallery-item">
-          <img src="${image.url || image.path}" 
+          <img src="${image.url}" 
                alt="${this.escapeHtml(image.title)}" 
                class="gallery-image"
                loading="lazy">
@@ -75,7 +120,7 @@ class PublicGalleryGitHub {
 document.addEventListener('DOMContentLoaded', function() {
   const galleryContainer = document.getElementById('gallery-container');
   if (galleryContainer) {
-    const gallery = new PublicGalleryGitHub('gallery-container');
+    const gallery = new PublicGallerySupabase('gallery-container');
     gallery.render();
   }
 });
