@@ -94,18 +94,37 @@ class PublicGallerySupabase {
 
     this.container.innerHTML = images.map(image => `
       <div class="col-12 col-md-6 col-lg-4 mb-4">
-        <div class="gallery-item">
+        <a href="${image.url}" 
+           class="glightbox gallery-item" 
+           data-gallery="gallery"
+           data-title="${this.escapeHtml(image.title)}"
+           data-description="${this.escapeHtml(image.description || '')}">
           <img src="${image.url}" 
                alt="${this.escapeHtml(image.title)}" 
                class="gallery-image"
                loading="lazy">
           <div class="gallery-overlay">
-            <h5 class="gallery-title">${this.escapeHtml(image.title)}</h5>
-            ${image.description ? `<p class="gallery-description">${this.escapeHtml(image.description)}</p>` : ''}
+            <div class="gallery-overlay-content">
+              <i class="bi bi-zoom-in" style="font-size: 2rem;"></i>
+              <h5 class="gallery-title">${this.escapeHtml(image.title)}</h5>
+              ${image.description ? `<p class="gallery-description">${this.escapeHtml(image.description)}</p>` : ''}
+            </div>
           </div>
-        </div>
+        </a>
       </div>
     `).join('');
+
+    // Inicializar GLightbox
+    if (typeof GLightbox !== 'undefined') {
+      const lightbox = GLightbox({
+        touchNavigation: true,
+        loop: true,
+        autoplayVideos: false,
+        zoomable: true,
+        draggable: true,
+        closeOnOutsideClick: true
+      });
+    }
   }
 
   // Escapar HTML para evitar XSS

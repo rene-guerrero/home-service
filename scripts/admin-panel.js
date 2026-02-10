@@ -1,5 +1,5 @@
 // Lógica del panel de administración
-let selectedFile = null;
+let selectedFiles = [];
 let editModal = null;
 let changePasswordModal = null;
 
@@ -20,7 +20,7 @@ document.addEventListener('DOMContentLoaded', function() {
   document.getElementById('uploadForm').addEventListener('submit', handleUpload);
   document.getElementById('uploadArea').addEventListener('click', () => document.getElementById('imageFile').click());
   document.getElementById('imageFile').addEventListener('change', handleFileSelect);
-  document.getElementById('removeImage').addEventListener('click', removeSelectedImage);
+  document.getElementById('removeAllImages').addEventListener('click', removeAllImages);
   document.getElementById('refreshGallery').addEventListener('click', loadGallery);
   document.getElementById('saveEditBtn').addEventListener('click', handleSaveEdit);
   document.getElementById('savePasswordBtn').addEventListener('click', handleChangePassword);
@@ -36,25 +36,44 @@ document.addEventListener('DOMContentLoaded', function() {
   // Password match checker
   document.getElementById('confirmPassword').addEventListener('input', checkPasswordMatch);
 
-  // Drag and drop
+  // Drag and drop solo en upload area
   const uploadArea = document.getElementById('uploadArea');
   
   uploadArea.addEventListener('dragover', (e) => {
     e.preventDefault();
+    e.stopPropagation();
     uploadArea.classList.add('drag-over');
   });
 
-  uploadArea.addEventListener('dragleave', () => {
+  uploadArea.addEventListener('dragleave', (e) => {
+    e.stopPropagation();
     uploadArea.classList.remove('drag-over');
   });
 
   uploadArea.addEventListener('drop', (e) => {
     e.preventDefault();
+    e.stopPropagation();
     uploadArea.classList.remove('drag-over');
     
     const files = e.dataTransfer.files;
     if (files.length > 0) {
       handleFileSelect({ target: { files } });
+    }
+  });
+
+  // Prevenir drag & drop en toda la página excepto en uploadArea
+  document.addEventListener('dragover', (e) => {
+    if (!uploadArea.contains(e.target) && !uploadArea.classList.contains('d-none')) {
+      e.preventDefault();
+      e.dataTransfer.effectAllowed = 'none';
+      e.dataTransfer.dropEffect = 'none';
+    }
+  });
+
+  document.addEventListener('drop', (e) => {
+    if (!uploadArea.contains(e.target)) {
+      e.preventDefault();
+      e.stopPropagation();
     }
   });
 
@@ -217,58 +236,135 @@ function handleLogout() {
 }
 
 function handleFileSelect(e) {
-  const file = e.target.files[0];
+  const files = Array.from(e.target.files);
   
-  if (!file) return;
+  if (files.length === 0) return;
 
-  // Validar tipo
-  if (!file.type.startsWith('image/')) {
-    showAlert('Por favor selecciona una imagen válida.', 'danger');
+  // Validar cantidad máxima
+  if (files.length > 5) {
+    showAlert('Máximo 5 imágenes a la vez.', 'warning');
+    files.splice(5);
+  }
+
+  // Validar cada archivo
+  const validFiles = [];
+  for (const file of files) {
+    // Validar tipo
+    if (!file.type.startsWith('image/')) {
+      showAlert(`"${file.name}" no es una imagen válida.`, 'warning');
+      continue;
+    }
+
+    // Validar tamaño (5MB)
+    if (file.size > 5 * 1024 * 1024) {
+      showAlert(`"${file.name}" es demasiado grande. Máximo 5MB.`, 'warning');
+      continue;
+    }
+
+    validFiles.push(file);
+  }
+
+  if (validFiles.length === 0) {
     return;
   }
 
-  // Validar tamaño
-  if (file.size > 2 * 1024 * 1024) {
-    showAlert('La imagen es demasiado grande. Máximo 2MB.', 'danger');
-    return;
-  }
-
-  selectedFile = file;
-
-  // Mostrar preview
-  const reader = new FileReader();
-  reader.onload = (e) => {
-    document.getElementById('imagePreview').src = e.target.result;
-    document.getElementById('imagePreviewContainer').classList.remove('d-none');
-    document.getElementById('uploadArea').classList.add('d-none');
-    document.getElementById('uploadBtn').disabled = false;
-  };
-  reader.readAsDataURL(file);
+  selectedFiles = validFiles;
+  displayPreviews();
 }
 
-function removeSelectedImage() {
-  selectedFile = null;
+function displayPreviews() {
+  const previewContainer = document.getElementById('imagePreviewContainer');
+  const singlePreview = document.getElementById('singlePreview');
+  const multiplePreview = document.getElementById('multiplePreview');
+  const imageList = document.getElementById('imageList');
+  
+  const count = selectedFiles.length;
+  
+  if (count === 1) {
+    // Una sola imagen - mostrar preview
+    const file = selectedFiles[0];
+    const reader = new FileReader();
+    reader.onload = (e) => {
+      document.getElementById('singlePreviewImage').src = e.target.result;
+      singlePreview.classList.remove('d-none');
+      multiplePreview.classList.add('d-none');
+    };
+    reader.readAsDataURL(file);
+  } else {
+    // Múltiples imágenes - mostrar lista
+    singlePreview.classList.add('d-none');
+    multiplePreview.classList.remove('d-none');
+    
+    document.getElementById('multipleCount').textContent = count;
+    
+    imageList.innerHTML = selectedFiles.map((file, index) => `
+      <li class="list-group-item d-flex justify-content-between align-items-center">
+        <div class="d-flex align-items-center">
+          <i class="bi bi-image text-primary me-2"></i>
+          <span>${file.name}</span>
+          <small class="text-muted ms-2">(${formatFileSize(file.size)})</small>
+        </div>
+        <button type="button" class="btn btn-sm btn-danger" onclick="removeFile(${index})">
+          <i class="bi bi-x"></i>
+        </button>
+      </li>
+    `).join('');
+  }
+
+  previewContainer.classList.remove('d-none');
+  document.getElementById('uploadArea').classList.add('d-none');
+  document.getElementById('uploadBtn').disabled = false;
+  
+  // Actualizar texto del botón
+  document.getElementById('uploadBtn').innerHTML = `<i class="bi bi-plus-circle me-1"></i>Subir ${count} imagen${count > 1 ? 'es' : ''} a la Galería`;
+}
+
+function formatFileSize(bytes) {
+  if (bytes < 1024) return bytes + ' B';
+  if (bytes < 1024 * 1024) return (bytes / 1024).toFixed(1) + ' KB';
+  return (bytes / (1024 * 1024)).toFixed(1) + ' MB';
+}
+
+function removeFile(index) {
+  selectedFiles.splice(index, 1);
+  
+  if (selectedFiles.length === 0) {
+    removeAllImages();
+  } else {
+    // Actualizar el input de archivos para reflejar el cambio
+    // Crear un nuevo FileList con los archivos restantes
+    const dt = new DataTransfer();
+    selectedFiles.forEach(file => dt.items.add(file));
+    document.getElementById('imageFile').files = dt.files;
+    
+    // Volver a mostrar las previews
+    displayPreviews();
+  }
+}
+
+function removeAllImages() {
+  selectedFiles = [];
   document.getElementById('imageFile').value = '';
   document.getElementById('imagePreviewContainer').classList.add('d-none');
   document.getElementById('uploadArea').classList.remove('d-none');
   document.getElementById('uploadBtn').disabled = true;
+  document.getElementById('uploadBtn').innerHTML = '<i class="bi bi-plus-circle me-1"></i>Agregar a Galería';
 }
 
 async function handleUpload(e) {
   e.preventDefault();
 
-  if (!selectedFile) {
-    showAlert('Por favor selecciona una imagen.', 'danger');
+  if (selectedFiles.length === 0) {
+    showAlert('Por favor selecciona al menos una imagen.', 'danger');
     return;
   }
 
   const title = document.getElementById('imageTitle').value.trim();
   const description = document.getElementById('imageDescription').value.trim();
 
-  if (!title) {
-    showAlert('Por favor ingresa un título.', 'danger');
-    return;
-  }
+  // Usar valores por defecto si están vacíos
+  const defaultTitle = title || 'Imagen sin título';
+  const defaultDescription = description || '';
 
   // Mostrar loading
   const uploadBtn = document.getElementById('uploadBtn');
@@ -277,23 +373,49 @@ async function handleUpload(e) {
   uploadBtn.disabled = true;
 
   try {
-    const result = await galleryStorage.addImage(selectedFile, title, description);
+    let successCount = 0;
+    let errorCount = 0;
 
-    if (result.success) {
-      showAlert('¡Imagen agregada exitosamente!', 'success');
+    // Subir cada imagen
+    for (let i = 0; i < selectedFiles.length; i++) {
+      const file = selectedFiles[i];
       
-      // Limpiar formulario
-      document.getElementById('uploadForm').reset();
-      removeSelectedImage();
-      
-      // Recargar galería
-      loadGallery();
-      updateStats();
-    } else {
-      showAlert(result.message, 'danger');
+      // Si hay múltiples imágenes, añadir número al título
+      const imageTitle = selectedFiles.length > 1 
+        ? `${defaultTitle} (${i + 1}/${selectedFiles.length})` 
+        : defaultTitle;
+
+      uploadBtn.innerHTML = `<span class="spinner-border spinner-border-sm me-2"></span>Subiendo ${i + 1}/${selectedFiles.length}...`;
+
+      const result = await galleryStorage.addImage(file, imageTitle, defaultDescription);
+
+      if (result.success) {
+        successCount++;
+      } else {
+        errorCount++;
+        console.error(`Error al subir ${file.name}:`, result.message);
+      }
     }
+
+    // Mostrar resultado
+    if (successCount > 0 && errorCount === 0) {
+      showAlert(`¡${successCount} imagen${successCount > 1 ? 'es' : ''} agregada${successCount > 1 ? 's' : ''} exitosamente!`, 'success');
+    } else if (successCount > 0 && errorCount > 0) {
+      showAlert(`${successCount} imagen${successCount > 1 ? 'es' : ''} subida${successCount > 1 ? 's' : ''}, ${errorCount} fallida${errorCount > 1 ? 's' : ''}.`, 'warning');
+    } else {
+      showAlert('Error al subir las imágenes.', 'danger');
+    }
+
+    // Limpiar formulario
+    document.getElementById('uploadForm').reset();
+    removeAllImages();
+    
+    // Recargar galería
+    loadGallery();
+    updateStats();
+
   } catch (error) {
-    showAlert('Error al subir la imagen: ' + error.message, 'danger');
+    showAlert('Error al subir las imágenes: ' + error.message, 'danger');
   } finally {
     uploadBtn.innerHTML = originalText;
     uploadBtn.disabled = false;
