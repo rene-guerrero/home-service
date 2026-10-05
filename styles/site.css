@@ -251,7 +251,8 @@ body {
 }
 .gallery-item:hover { transform: translateY(-6px); box-shadow: var(--shadow-md); }
 .gallery-item:hover .gallery-overlay, .gallery-item:focus-visible .gallery-overlay { opacity: 1; }
-.gallery-image { width: 100%; aspect-ratio: 8 / 5; object-fit: cover; display: block; }
+.gallery-item picture { display: block; }
+.gallery-image { width: 100%; height: auto; aspect-ratio: 8 / 5; object-fit: cover; display: block; }
 .gallery-overlay {
   position: absolute; inset: 0; padding: 16px; color: #fff; opacity: 0; transition: opacity 0.3s ease;
   background: linear-gradient(to top, rgba(0, 0, 0, 0.8), rgba(0, 0, 0, 0.25));
@@ -358,6 +359,7 @@ body {
   .site-nav .navbar-brand img { height: 38px; }
 }
 @media (max-width: 575.98px) {
+  .gallery-image { aspect-ratio: 3 / 4; }
   .solar-collage { padding: 0 0 2.5rem 1rem; }
   .collage-main { height: 300px; }
   .collage-a { height: 130px; }
