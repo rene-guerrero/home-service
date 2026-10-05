@@ -74,21 +74,23 @@ class PublicGallerySupabase {
     // Mostrar loading
     this.container.innerHTML = `
       <div class="col-12 text-center py-5">
-        <div class="spinner-border text-primary" role="status">
-          <span class="visually-hidden">Cargando...</span>
+        <div class="spinner-border brand-text" role="status">
+          <span class="visually-hidden" data-i18n="gallery.loading">Cargando galería…</span>
         </div>
-        <p class="text-muted mt-2">Cargando galería...</p>
+        <p class="text-muted mt-2" data-i18n="gallery.loading">Cargando galería…</p>
       </div>
     `;
 
+    I18n.apply(this.container);
     const images = await this.getImages();
     
     if (images.length === 0) {
       this.container.innerHTML = `
         <div class="col-12 text-center py-5">
-          <p class="text-muted">No hay imágenes en la galería aún.</p>
+          <p class="text-muted" data-i18n="gallery.empty">Aún no hay imágenes en la galería.</p>
         </div>
       `;
+      I18n.apply(this.container);
       return;
     }
 
@@ -114,15 +116,32 @@ class PublicGallerySupabase {
       </div>
     `).join('');
 
-    // Inicializar GLightbox
+    // Inicializar GLightbox con configuración mejorada para touch
     if (typeof GLightbox !== 'undefined') {
       const lightbox = GLightbox({
         touchNavigation: true,
+        touchFollowAxis: true,
         loop: true,
         autoplayVideos: false,
         zoomable: true,
         draggable: true,
-        closeOnOutsideClick: true
+        closeOnOutsideClick: true,
+        moreLength: 0,
+        slideEffect: 'slide',
+        moreText: I18n.t('gallery.more'),
+        svg: {
+          close: '<svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><line x1="18" y1="6" x2="6" y2="18"></line><line x1="6" y1="6" x2="18" y2="18"></line></svg>',
+          next: '<svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><polyline points="9 18 15 12 9 6"></polyline></svg>',
+          prev: '<svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><polyline points="15 18 9 12 15 6"></polyline></svg>'
+        }
+      });
+      
+      // Habilitar gestos de zoom con pinch en móvil
+      lightbox.on('open', () => {
+        const gslideMedia = document.querySelector('.gslide-media');
+        if (gslideMedia) {
+          gslideMedia.style.touchAction = 'pinch-zoom';
+        }
       });
     }
   }
